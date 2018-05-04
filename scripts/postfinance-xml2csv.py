@@ -3,11 +3,11 @@ import xml.etree.ElementTree as eTree
 import csv
 
 # Create array of XML files to parse
-xmlFiles = glob.glob('/usr/src/postfinance-xml2csv/xml/*.xml')
+xmlFiles = glob.glob('/usr/src/postfinance-xml2csv/xml2csv/*.xml')
 
 # Define namespace
 namespace = {
-    'Document': 'urn:iso:std:iso:20022:tech:xsd:camt.053.001.02'
+    'Document': 'urn:iso:std:iso:20022:tech:xsd:camt.053.001.04'
 }
 
 # Per XML file
@@ -20,7 +20,6 @@ for xmlFile in xmlFiles:
 
         # Parse XML file
         root = eTree.parse(xmlFile).getroot()
-        iban = root.find('Document:BkToCstmrStmt/Document:Stmt/Document:Acct/Document:Id/Document:IBAN', namespace).text
         transactions = root.findall('Document:BkToCstmrStmt/Document:Stmt/Document:Ntry', namespace)
         for transaction in transactions:
             amount = float(transaction.find('Document:Amt', namespace).text)
