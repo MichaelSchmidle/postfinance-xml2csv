@@ -1,14 +1,8 @@
 import os
 import glob
 import xml.etree.ElementTree as eTree
-import re
 from datetime import datetime
 import csv
-
-# Function to extract XML namespace from element
-def namespace(element):
-    namespace = re.match('\{(.*)\}', element.tag)
-    return namespace.group(1) if namespace else ''
 
 # Determin base directory of this script
 baseDir = os.path.dirname(__file__) + '/'
@@ -22,27 +16,27 @@ for xmlFile in xmlFiles:
     # Parse XML file
     root = eTree.parse(xmlFile).getroot()
 
-    # Set the namespace
-    ns = {'Document': namespace(root)}
+    # Set the namespace, also defines the supported CAMT version
+    namespace = {'Document': 'urn:iso:std:iso:20022:tech:xsd:camt.053.001.04'}
 
     # Define metadata
-    iban = root.find('Document:BkToCstmrStmt/Document:Stmt/Document:Acct/Document:Id/Document:IBAN', ns).text
-    owner = root.find('Document:BkToCstmrStmt/Document:Stmt/Document:Acct/Document:Ownr/Document:Nm', ns).text
-    closingDate = root.findall('Document:BkToCstmrStmt/Document:Stmt/Document:Bal', ns)[1].find('Document:Dt/Document:Dt', ns).text
+    iban = root.find('Document:BkToCstmrStmt/Document:Stmt/Document:Acct/Document:Id/Document:IBAN', namespace).text
+    owner = root.find('Document:BkToCstmrStmt/Document:Stmt/Document:Acct/Document:Ownr/Document:Nm', namespace).text
+    closingDate = datetime.strftime(datetime.strptime(root.find('Document:BkToCstmrStmt/Document:Stmt/Document:FrToDt/Document:ToDtTm', namespace).text, '%Y-%m-%dT%H:%M:%S'), '%Y-%m')
 
     # Generate corresponding CSV file with header row
     with open(baseDir + 'csv/' + iban + '-' + closingDate + '.csv', 'w') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerow(['IBAN', 'Owner', 'Amount', 'Currency', 'Date', 'Info', 'Reference'])
-        transactions = root.findall('Document:BkToCstmrStmt/Document:Stmt/Document:Ntry', ns)
+        transactions = root.findall('Document:BkToCstmrStmt/Document:Stmt/Document:Ntry', namespace)
         for transaction in transactions:
-            amount = float(transaction.find('Document:Amt', ns).text)
-            if transaction.find('Document:CdtDbtInd', ns).text == 'DBIT':
+            amount = float(transaction.find('Document:Amt', namespace).text)
+            if transaction.find('Document:CdtDbtInd', namespace).text == 'DBIT':
                 amount = amount * -1
-            currency = transaction.find('Document:Amt', ns).get('Ccy')
-            date = transaction.find('Document:BookgDt/Document:Dt', ns).text
-            info = transaction.find('Document:AddtlNtryInf', ns).text
-            reference = transaction.find('Document:AcctSvcrRef', ns).text
+            currency = transaction.find('Document:Amt', namespace).get('Ccy')
+            date = transaction.find('Document:BookgDt/Document:Dt', namespace).text
+            info = transaction.find('Document:AddtlNtryInf', namespace).text
+            reference = transaction.find('Document:AcctSvcrRef', namespace).text
 
             # Write transaction row to CSV file
             writer.writerow([iban, owner, amount, currency, date, info, reference])        
