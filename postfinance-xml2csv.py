@@ -31,7 +31,7 @@ for xmlFile in xmlFiles:
     closingDate = root.findall('Document:BkToCstmrStmt/Document:Stmt/Document:Bal', ns)[1].find('Document:Dt/Document:Dt', ns).text
 
     # Generate corresponding CSV file with header row
-    with open(baseDir + 'csv/' + iban + '-' + closingDate + '-' + os.path.basename(xmlFile) + '.csv', 'w') as csvFile:
+    with open(baseDir + 'csv/' + iban + '-' + closingDate + '.csv', 'w') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerow(['IBAN', 'Owner', 'Amount', 'Currency', 'Date', 'Info', 'Reference'])
         transactions = root.findall('Document:BkToCstmrStmt/Document:Stmt/Document:Ntry', ns)
