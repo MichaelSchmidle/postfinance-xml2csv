@@ -4,4 +4,4 @@ services:
     image: python
     volumes:
     - ./:/usr/src/postfinance-xml2csv/
-    command: python /usr/src/postfinance-xml2csv/scripts/postfinance-xml2csv.py
+    command: python /usr/src/postfinance-xml2csv/postfinance-xml2csv.py
