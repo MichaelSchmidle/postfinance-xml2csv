@@ -22,7 +22,7 @@ for xmlFile in xmlFiles:
     # Define metadata
     iban = root.find('Document:BkToCstmrStmt/Document:Stmt/Document:Acct/Document:Id/Document:IBAN', namespace).text
     owner = root.find('Document:BkToCstmrStmt/Document:Stmt/Document:Acct/Document:Ownr/Document:Nm', namespace).text
-    closingDate = datetime.strftime(datetime.strptime(root.find('Document:BkToCstmrStmt/Document:Stmt/Document:FrToDt/Document:ToDtTm', namespace).text, '%Y-%m-%dT%H:%M:%S'), '%Y-%m')
+    closingDate = datetime.strftime(datetime.strptime(root.find('Document:BkToCstmrStmt/Document:Stmt/Document:FrToDt/Document:ToDtTm', namespace).text, '%Y-%m-%dT%H:%M:%S'), '%Y-%m-%d')
 
     # Generate corresponding CSV file with header row
     with open(baseDir + 'csv/' + iban + '-' + closingDate + '.csv', 'w') as csvFile:
@@ -34,7 +34,7 @@ for xmlFile in xmlFiles:
             if transaction.find('Document:CdtDbtInd', namespace).text == 'DBIT':
                 amount = amount * -1
             currency = transaction.find('Document:Amt', namespace).get('Ccy')
-            date = transaction.find('Document:BookgDt/Document:Dt', namespace).text
+            date = datetime.strftime(datetime.strptime(transaction.find('Document:BookgDt/Document:Dt', namespace).text, '%Y-%m-%d'), '%Y-%b-%d')
             info = transaction.find('Document:AddtlNtryInf', namespace).text
             reference = transaction.find('Document:AcctSvcrRef', namespace).text
 
