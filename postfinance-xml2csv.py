@@ -43,4 +43,4 @@ for xmlFile in xmlFiles:
             reference = transaction.find('Document:AcctSvcrRef', ns).text
 
             # Write transaction row to CSV file
-            writer.writerow([iban, owner, amount, currency, date, info, reference])        
+            writer.writerow([iban, owner, amount, currency, date, info, reference])
