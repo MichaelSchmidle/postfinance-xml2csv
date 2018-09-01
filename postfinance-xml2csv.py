@@ -25,8 +25,8 @@ for xmlFile in xmlFiles:
     closingDate = datetime.strftime(datetime.strptime(root.find('Document:BkToCstmrStmt/Document:Stmt/Document:FrToDt/Document:ToDtTm', namespace).text, '%Y-%m-%dT%H:%M:%S'), '%Y-%m-%d')
 
     # Generate corresponding CSV file with header row
-    with open(baseDir + 'csv/' + iban + '-' + closingDate + '.csv', 'w') as csvFile:
-        writer = csv.writer(csvFile)
+    with open(baseDir + 'csv/' + iban + '-' + closingDate + '.csv', 'w', newline = '') as csvFile:
+        writer = csv.writer(csvFile, delimiter = ";")
         writer.writerow(['IBAN', 'Owner', 'Amount', 'Currency', 'Date', 'Info', 'Reference'])
         transactions = root.findall('Document:BkToCstmrStmt/Document:Stmt/Document:Ntry', namespace)
         for transaction in transactions:
