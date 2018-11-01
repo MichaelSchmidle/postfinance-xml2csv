@@ -4,11 +4,8 @@ import xml.etree.ElementTree as eTree
 from datetime import datetime
 import csv
 
-# Determin base directory of this script
-baseDir = os.path.dirname(__file__) + '/'
-
 # Create array of XML files to parse
-xmlFiles = glob.glob(baseDir + 'xml/*.xml')
+xmlFiles = glob.glob('xml/*.xml')
 
 # Per XML file
 for xmlFile in xmlFiles:
@@ -25,7 +22,7 @@ for xmlFile in xmlFiles:
     closingDate = datetime.strftime(datetime.strptime(root.find('Document:BkToCstmrStmt/Document:Stmt/Document:FrToDt/Document:ToDtTm', namespace).text, '%Y-%m-%dT%H:%M:%S'), '%Y-%m-%d')
 
     # Generate corresponding CSV file with header row
-    with open(baseDir + 'csv/' + iban + '-' + closingDate + '.csv', 'w', newline = '') as csvFile:
+    with open('csv/' + iban + '-' + closingDate + '.csv', 'w', newline = '') as csvFile:
         writer = csv.writer(csvFile, delimiter = ";")
         writer.writerow(['IBAN', 'Owner', 'Amount', 'Currency', 'Date', 'Info', 'Reference'])
         transactions = root.findall('Document:BkToCstmrStmt/Document:Stmt/Document:Ntry', namespace)
